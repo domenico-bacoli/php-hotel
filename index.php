@@ -53,12 +53,12 @@
     <h1 class="text-center mb-5">PHP Hotel</h1>
     <table class="table">
         <thead>
-            <tr>
+            <tr class="text-uppercase">
                 <th scope="col">Name</th>
                 <th scope="col ">Description</th>
-                <th scope="col">parking</th>
+                <th scope="col">Parking</th>
                 <th scope="col">Vote</th>
-                <th scope="col">distance to center</th>
+                <th scope="col">Distance To Center</th>
             </tr>
         </thead>
         <tbody>
