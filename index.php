@@ -36,6 +36,40 @@
             'distance_to_center' => 50
         ],
     ];
+
+    //con il doppio ?? è come se andassimo ad inserire tutto in un isset() per controllare se abbiamo effettivamente ricevuto il valore dal form
+    // quindi se settato prendiamo il valore del form altrimenti gli diamo come valore 'off'
+    // $isParkingRequired = $_GET['isParkingRequired'] ?? 'off';
+
+    //invece di lavorare con valore di stringa 'on' e 'off' li cambiamo con i rispettivi booleani 
+
+    $isParkingRequired = $_GET['isParkingRequired'] ?? false;
+    if($isParkingRequired == "on") {
+        $isParkingRequired = true;
+    }
+
+    //creo un altro array che corrisponderà solo agli hotel da visualizzare in base ai filtri
+    $filteredHotels = $hotels;
+
+    //filtriamo questi hotel in base alle ricerche dell'utente che leggiamo tramite i get
+    //modifichaimo quindi gli elementi presenti in questo array 
+    //in pagina poi visualizziamo solo gli elementi presenti in questo array
+
+    //Filtro del parcheggio (disponibile o non disponibile)
+    if($isParkingRequired) {
+        //prima di tutto svuoto l'array altrimenti di default mi visualizza tutti gli hotel perchè alla riga 52 ho assegnato a $filteredHotels il contenuto di $hotels.
+        $filteredHotels = [];
+
+        //per ogni hotel dell'array iniziale controllo che abbia il parcheggio 
+        //in quel caso lo inserisco nell'array degli hotel filtrati $filteredHotels
+
+        foreach($hotels as $singleHotel) {
+            if($singleHotel['parking'] == true) {
+                //pusho questo hotel nell'array degli hotel filtrati $filteredHotels
+                $filteredHotels[] = $singleHotel;
+            }
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -51,28 +85,53 @@
 </head>
 <body>
     <h1 class="text-center mb-5">PHP Hotel</h1>
+
+    <form action="index.php" method="GET">
+        <input name="isParkingRequired" type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+        <label class="btn btn-outline-primary mb-3" for="btn-check-outlined">Parcheggio</label><br>
+
+        <button type="submit" class="btn btn-primary mb-4">Filtra</button>
+    </form>
+
+    <pre>
+        Output del form:
+    </pre>
+
+
     <table class="table">
         <thead>
-            <tr class="text-uppercase">
-                <th scope="col">Name</th>
-                <th scope="col ">Description</th>
-                <th scope="col">Parking</th>
-                <th scope="col">Vote</th>
-                <th scope="col">Distance To Center</th>
+            <tr>
+            <?php 
+            foreach($hotels[0] as $key => $value) {
+            ?>
+
+                <th scope="col"><?php echo $key ?></th>
+                <?php 
+            }
+            ?>            
             </tr>
         </thead>
         <tbody>
-    <?php 
-    foreach( $hotels as $hotel ) {
-        
-    ?>
-            <tr>
-                <td class="w-25 p-3"> <?php echo $hotel['name']; ?></td>
-                <td class="w-25 p-3"> <?php echo $hotel['description']; ?></td>
-                <td class="w-25 p-3"> <?php echo $hotel['parking'] ? 'Disponibile' : 'Non Disponibile'; ?></td>
-                <td class="p-3"> <?php echo $hotel['vote']; ?></td>
-                <td class="p-3"> <?php echo $hotel['distance_to_center'] . 'km'; ?></td>
-            </tr>
+        <?php 
+        foreach($filteredHotels as $singleHotel) {
+            
+            echo "<tr>";
+
+            foreach($singleHotel as $hotelPropertyKey => $hotelPropertyValue) {
+                
+                if($hotelPropertyKey == "parking") {
+                    if($hotelPropertyValue == "true") {
+                        echo "<td>Disponibile</td>";
+                    }else {
+                        echo "<td>Non Disponibile</td>";
+                    }
+                } else {
+                    echo "<td>{$hotelPropertyValue}</td>";
+                }  
+            }
+            
+            echo "</tr>";
+        ?>
         <?php 
         }
         ?>
